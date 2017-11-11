@@ -1,2 +1,1 @@
-# BDDVet
-Programa de veterinaria
+# BDDPersona
