@@ -45,6 +45,22 @@ public class BuscarMascota extends javax.swing.JFrame {
         llenarComboBoxes2();
     }
 /**
+ * Metodo encargado de extraer en nombre de tipodenuncia, dada una mascota que se le hizo la 
+ * denuncia.
+ * @param id
+ * @return
+ * @throws SQLException 
+ */
+    public String mostrarTipoDenuncia(String id) throws SQLException{
+        String res="";
+        ResultSet rs= bdd.enviarConsulta("SELECT DESCRIPCION FROM TIPODENUNCIA WHERE TIPODENUNCIA.IDDENUNCIA IN ("
+                + "SELECT tipo_DENUNCIA FROM DENUNCIA WHERE denuncia.ID_MASCOTA="+id+")");
+        while(rs.next()){
+            res+= rs.getString(1);
+        }
+        return res;
+    }
+/**
  * Metodo encargado de imprimir en el JPanel el resputado de una consulta en especifico.
  * En este caso particular los datos de la mascota denunciada: idmascota, nombre, descripcion, tipoDenuncia.
  * Ademas se guarda en un array los datos completos de la mascota para utilizarlos luego, cuando
@@ -56,17 +72,21 @@ public void imprimirResultados(ResultSet rs){
             a.clear();
             listModel.clear();
             String res="";
+            String shownRes="";
             if (rs!=null){
                 while (rs.next()) {
-                    res = rs.getString(1)+ "," 
+                    shownRes += rs.getString(1)+ "," 
+                          +rs.getString(2)+","+ mostrarTipoDenuncia(rs.getString(1));
+                    listModel.addElement(shownRes);
+                    shownRes="";
+                    res+= rs.getString(1)+ "," 
                           +rs.getString(2)+","
                           + rs.getString(3)+ ","
-                          +rs.getString(4);
-                    listModel.addElement(res);
-                    res+= ","
+                          +rs.getString(4)+","
                           +rs.getString(5)+ ","
                           +rs.getString(6);
                     a.add(res);
+                    res="";
                 }
             }else{
                 a.add("No se encontraron mascotas");
@@ -302,14 +322,22 @@ public void cargarMascotas (){
          if( tipoAnimal.getSelectedIndex() == (-1)){
                 JOptionPane.showMessageDialog(null, "Debe ingresar que animal es.");
                 respuesta= false;
+                return respuesta;
             }
         if( raza.getSelectedIndex() == (-1)){
                 JOptionPane.showMessageDialog(null, "Debe ingresar una raza.");
                 respuesta= false;
+                return respuesta;
             } 
         if("".equals(zona.getText()) && !isNumeric(zona.getText())){
             JOptionPane.showMessageDialog(null, "Zona invalida");
             respuesta=false;
+            return respuesta;
+        }
+        if(!isNumeric(zona.getText())){
+            JOptionPane.showMessageDialog(null, "Zona invalida");
+            respuesta=false;
+            return respuesta;
         }
         return respuesta;
     }
@@ -358,6 +386,8 @@ public void cargarMascotas (){
             Logger.getLogger(BuscarMascota.class.getName()).log(Level.SEVERE, null, ex);
         } catch (SQLException ex) {
             Logger.getLogger(BuscarMascota.class.getName()).log(Level.SEVERE, null, ex);
+        }  catch (ArrayIndexOutOfBoundsException ex) {
+            JOptionPane.showMessageDialog(null, "No se ha seleccionado nada.");
         }
     }//GEN-LAST:event_bverMascActionPerformed
 

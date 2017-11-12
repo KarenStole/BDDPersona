@@ -82,27 +82,37 @@ public class Denuncia extends javax.swing.JFrame {
         boolean respuesta = true;
         limpiarErrores();
         try {  
-            if(idmascota.getText().compareTo("")!=0 && !isNumeric(idmascota.getText())){
+            if(idmascota.getText().compareTo("")==0){
                 lerrormascota.setText("Datos invalidos.");
                 respuesta = false;
+                return respuesta;
+            }
+            if (!isNumeric(idmascota.getText())){
+                lerrormascota.setText("Solo numeros");
+                respuesta = false;
+                return respuesta;
             }
             ResultSet rs = bdd.enviarConsulta("SELECT idmascota FROM Mascota WHERE idmascota="+idmascota.getText());
             if (!rs.next()) {
                 lerrormascota.setText("No existe una mascota con ese id");
                 respuesta = false;
+                return respuesta;
             }
 
             if(!isNumeric(zona.getText())){
                 lerrorzona.setText("Zona debe contener solo numeros.");
                 respuesta = false;
+                return respuesta;
             }
-            if(zona.getText().compareTo("")!=0){
+            if(zona.getText().compareTo("")==0){
                 lerrorzona.setText("Este campo no puede ser vacio.");
                 respuesta = false;
+                return respuesta;
             }
             if(tipoDenuncia.getSelectedIndex() == (-1)){
                 JOptionPane.showMessageDialog(null, "Ingrese el tipo de denuncia.");
                 respuesta= false;
+                return respuesta;
             }
         } catch (SQLException ex) {
             Logger.getLogger(Denuncia.class.getName()).log(Level.SEVERE, null, ex);
@@ -276,7 +286,7 @@ public class Denuncia extends javax.swing.JFrame {
         lerrormascota.setForeground(new java.awt.Color(255, 0, 0));
         lerrormascota.setText("          ");
         Fondo.add(lerrormascota);
-        lerrormascota.setBounds(140, 70, 270, 20);
+        lerrormascota.setBounds(140, 80, 270, 20);
 
         lerrorzona.setFont(new java.awt.Font("Arial Rounded MT Bold", 0, 11)); // NOI18N
         lerrorzona.setForeground(new java.awt.Color(255, 0, 0));
@@ -317,7 +327,6 @@ public class Denuncia extends javax.swing.JFrame {
  */
     private void insertarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_insertarActionPerformed
         boolean chequeo = chequeoDatos();
-        System.out.println("..."+tipoDenuncia.getSelectedIndex());
         if (chequeo){
             ResultSet rs = bdd.enviarConsulta("INSERT INTO denuncia(cipersona, tipo_denuncia, id_mascota, fechadenuncia, zona) VALUES ("               
                 + ciDenunciante + ","
