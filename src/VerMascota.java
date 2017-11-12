@@ -3,10 +3,12 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -30,6 +32,16 @@ public class VerMascota extends javax.swing.JFrame {
     public VerMascota() {
         initComponents();
     }
+    /**
+     * Una vez invocada esta pantalla, se presentan todos los datos de la mascota pasada por
+     * parametro, asi como tambien su foto.
+     * @param datosm
+     * @throws IOException
+     * @throws ClassNotFoundException
+     * @throws InstantiationException
+     * @throws IllegalAccessException
+     * @throws SQLException 
+     */
     public VerMascota(String datosm) throws IOException, ClassNotFoundException, InstantiationException, IllegalAccessException, SQLException {
         initComponents();
         textoayuda.setText("<html>Si se recuperó la mascota,<br>  ingresa la cédula de quien <br> la fue a buscar y haz click aquí :</html>");
@@ -42,7 +54,11 @@ public class VerMascota extends javax.swing.JFrame {
         vet.setText(lista[5]);
         subirfoto();
     }
-    
+/**
+ * Metodo encargado de extraer el nombre de la raza de la mascota, pasando el id de la raza
+ * @param idraza
+ * @throws SQLException 
+ */    
     public void agregarRaza(String idraza) throws SQLException{
         ArrayList resultado= new ArrayList();
         int idraza1 = Integer.parseInt(idraza);
@@ -54,7 +70,17 @@ public class VerMascota extends javax.swing.JFrame {
 
         raza.setText(resultado.get(idraza1).toString());
     }
-    
+ /**
+  * Metodo encargado de mostrar en pantalla la foto de la mascota.
+  * Dada el id de la mascota se busca su imagen correspondiente en la tabla de imagen, obteniendo la
+  * ruta relativa de esta que se encuentra en los archivos del programa, y se muestra en pantalla. En le caso de 
+  * no tener una imagen se muestra una por defecto.
+  * @throws IOException
+  * @throws ClassNotFoundException
+  * @throws InstantiationException
+  * @throws IllegalAccessException
+  * @throws SQLException 
+  */   
     public void subirfoto() throws IOException, ClassNotFoundException, InstantiationException, IllegalAccessException, SQLException{
 
             Connection con = null;
@@ -246,9 +272,20 @@ public class VerMascota extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+     public String fecha(){
+        Date now = new Date(System.currentTimeMillis());
+        SimpleDateFormat date = new SimpleDateFormat("yyyy/MM/dd");
 
+        return date.format(now);
+    }
+/**
+ * Metodo encargado de dar como 'reuelta' la denuncia, si el usuario lo desea.
+ * Para esto se debe colocar a eleccion el CI de la persona que se hizo responsable de la mascota, el metodo
+ * automaticamente inserta la fecha de resolucion invocando al metodo fecha()
+ * @param evt 
+ */
     private void bresolverActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bresolverActionPerformed
-        bdd.enviarConsulta("UPDATE denuncia SET fecharesolucion = '4/11/2017',"
+        bdd.enviarConsulta("UPDATE denuncia SET fecharesolucion = '"+fecha()+"',"
                 + "personaresponsable =" + ciresponsable.getText() + "where id_mascota = "+ nrochip.getText()+" and fecharesolucion is null");
         bresolver.setVisible(false);
         textoayuda.setText("Denuncia resuelta");

@@ -28,6 +28,15 @@ public class BuscarMascota extends javax.swing.JFrame {
         initComponents();
         listaci.setModel(listModel);
     }
+    /**
+     * Constructor encargado de colocar los datos iniciales en pantalla.
+     * Se pasa CI de persona traido de Menu, para buscar las mascotas denunciadas 
+     * cuyo dueño le pertenezca esa cedula.
+     * Tambien se cargan los ComboBoxes con los datos de TipoAnimal y Raza estraidos
+     * de la base de datos.
+     * @param ci
+     * @throws SQLException 
+     */
     public BuscarMascota(int ci) throws SQLException {
         initComponents();
         listaci.setModel(listModel);
@@ -35,7 +44,13 @@ public class BuscarMascota extends javax.swing.JFrame {
         cargarMascotas();
         llenarComboBoxes2();
     }
-    
+/**
+ * Metodo encargado de imprimir en el JPanel el resputado de una consulta en especifico.
+ * En este caso particular los datos de la mascota denunciada: idmascota, nombre, descripcion, tipoDenuncia.
+ * Ademas se guarda en un array los datos completos de la mascota para utilizarlos luego, cuando
+ * se seleccione VerMacota.
+ * @param rs 
+ */   
 public void imprimirResultados(ResultSet rs){
         try {
             a.clear();
@@ -60,7 +75,13 @@ public void imprimirResultados(ResultSet rs){
             Logger.getLogger(BuscarMascota.class.getName()).log(Level.SEVERE, null, ex);
         }
     }    
-    
+/**
+ * Metodo encargado de llenar el ComboBox de Razas.
+ * La informacion es recolectada de la base de datos directamente, de la tabla Raza.
+ * Dependiendo de que se elija en el comboBox de tipoAnimal, se presentaran las razas disponibles en la base de datos.
+ * @param i
+ * @throws SQLException 
+ */    
 private void llenarComboBoxes(int i) throws SQLException{
         raza.removeAllItems();
         ArrayList razas= new ArrayList();
@@ -73,6 +94,12 @@ private void llenarComboBoxes(int i) throws SQLException{
             raza.insertItemAt((String) razas.get(e), e);
         }      
     }
+
+/**
+ * Metodo encargado de llenar comboBox donde se presenta los ripos de animales.
+ * Dichos datos son esctraidos directamente de la tabla TipoAnimal de la base de datos.
+ * @throws SQLException 
+ */
 private void llenarComboBoxes2() throws SQLException{
         tipoAnimal.removeAllItems();
         ArrayList tipoanimal= new ArrayList();
@@ -84,12 +111,15 @@ private void llenarComboBoxes2() throws SQLException{
             tipoAnimal.insertItemAt((String) tipoanimal.get(e), e);
         }
     }
-
+/**
+ * Metodo encargado de cargar las mascotas denuciadas tanto de perdida como de encuentro,
+ * dado el ci del dueño. Se muestra en pantalla los resultados.
+ */
 public void cargarMascotas (){
     ResultSet rs = bdd.enviarConsulta("select * from mascota where idmascota in "
                     + "(select id_mascota from denuncia where id_mascota in "
                     + "(select id_mascota from dueniomascota where ci_dueño = "+cedula+") "
-                    + "and tipo_denuncia = 1 and fecharesolucion is null)");
+                    + " and fecharesolucion is null)");
     imprimirResultados(rs);
 }
     /**
@@ -249,7 +279,11 @@ public void cargarMascotas (){
     private void zonaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_zonaActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_zonaActionPerformed
-
+/**
+ * Se llenan el comboBox de raza, invocando a llenarComboBoxes() dependiendo
+ * de lo seleccionado en comboBox de tipoAnimal.
+ * @param evt 
+ */
     private void tipoAnimalActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tipoAnimalActionPerformed
         try {
             llenarComboBoxes(tipoAnimal.getSelectedIndex());
@@ -257,7 +291,13 @@ public void cargarMascotas (){
             Logger.getLogger(BuscarMascota.class.getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_tipoAnimalActionPerformed
- public boolean chequeoBusqueda(){
+/**
+ * Metodo encargado de chequear que todos los datos imgresados para la busqueda sean validos.
+ * Se chequea: Zona debe ser no nula y numerico
+ *             Se debe haber seleccionado tipoAnimal y raza.
+ * @return True si los datos son numericos, False si no.
+ */
+    public boolean chequeoBusqueda(){
         boolean respuesta=true;
          if( tipoAnimal.getSelectedIndex() == (-1)){
                 JOptionPane.showMessageDialog(null, "Debe ingresar que animal es.");
@@ -273,6 +313,11 @@ public void cargarMascotas (){
         }
         return respuesta;
     }
+    /**
+     * Metodo encargado de chequear sila cadena de caracter solo contiene numeros.
+     * @param cadena
+     * @return True si es solo numeros, False de lo contrario,
+     */
     public static boolean isNumeric(String cadena){
 	try {
 		Integer.parseInt(cadena);
@@ -281,6 +326,12 @@ public void cargarMascotas (){
 		return false;
 	}
     }
+    /**
+     * Metodo encargado de realizar la busqueda dada una zona, tipo animal y raza.
+     * Invoca chequeoBusqueda(), para permitir o no realizar ducha accion.
+     * Se muestra en pantalla todas las denuncias hechas con esas caracterisiticas.
+     * @param evt 
+     */
     private void buscarfActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buscarfActionPerformed
        if(chequeoBusqueda()){
         int razas = (tipoAnimal.getSelectedIndex()*6)+(raza.getSelectedIndex()); //TODO ARREGLAR ESTO
@@ -289,7 +340,11 @@ public void cargarMascotas (){
             + "and id_raza = " + razas);
         imprimirResultados(rs);}
     }//GEN-LAST:event_buscarfActionPerformed
-
+/**
+ * Una vez seleccionada la mascota denunciada a ver, se invoca a otra pantalla para ver toda la infroacion
+ * de la mascota junto a su foto.
+ * @param evt 
+ */
     private void bverMascActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bverMascActionPerformed
         try{
         new VerMascota(a.get(listaci.getSelectedIndex())).setVisible(true);}

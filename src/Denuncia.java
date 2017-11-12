@@ -18,19 +18,35 @@ public class Denuncia extends javax.swing.JFrame {
         initComponents();
         fecha.setText(fecha());
     }
+    /**
+     * Dicho constructor de encarca de predefinir los datos iniciales a mostrar en pantalla.
+     * Pasando la ci de la persona que infreso al programa, para utilizarlo mas adelante y setear
+     * la fecha de la denuncia a la actual, para cuando se haga una denuncia.
+     * Tambien se llenan los commboBoxes con relacion a tipo de denucia,
+     * @param ci
+     * @throws SQLException 
+     */
     public Denuncia(int ci) throws SQLException {
         initComponents();
         ciDenunciante= ci ;
         fecha.setText(fecha());
         llenarComboBoxes2();
     }
-    
+/**
+ * Metodo encargado de obtener la fecha actual.
+ * @return fecha
+ */   
      public String fecha(){
         Date now = new Date(System.currentTimeMillis());
         SimpleDateFormat date = new SimpleDateFormat("yyyy/MM/dd");
 
         return date.format(now);
     }
+     /**
+      * Metodo encargado de imprimir en pantalla el resultado de una consulta.
+      * @param rs
+      * @param tipocons 
+      */
     public void imprimirResultados(ResultSet rs, int tipocons){
         try {
             String res="";
@@ -54,7 +70,14 @@ public class Denuncia extends javax.swing.JFrame {
             Logger.getLogger(Denuncia.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-
+/**
+ * Metodo encargado de chequear los datos ingresados son correctos.
+ * Chequeos: idmascota no nulo, numerico y previamente registrado.
+ *          zona no nulo y numerico.
+ *          tipo de denuncia ingresado.
+ *          
+ * @return true si todos los datos son correctos, false de lo contrario.
+ */
     public boolean chequeoDatos(){
         boolean respuesta = true;
         limpiarErrores();
@@ -88,7 +111,11 @@ public class Denuncia extends javax.swing.JFrame {
         }
         return respuesta;
     } 
-    
+     /**
+     * Metodo encargado de chequear sila cadena de caracter solo contiene numeros.
+     * @param cadena
+     * @return True si es solo numeros, False de lo contrario,
+     */   
     public static boolean isNumeric(String cadena){
 	try {
 		Integer.parseInt(cadena);
@@ -102,6 +129,11 @@ public class Denuncia extends javax.swing.JFrame {
         lerrormascota.setText("     ");
         lerrorzona.setText("     ");
     }
+    /**
+     * Metodo encargado de llenar comboBox de tipo de denucia.
+     * Dicha informacion se extrae directamente de la tabla tipodenuncia de la base de datos.
+     * @throws SQLException 
+     */
     private void llenarComboBoxes2() throws SQLException{
         tipoDenuncia.removeAllItems();
         ArrayList tipoanimal= new ArrayList();
@@ -140,6 +172,7 @@ public class Denuncia extends javax.swing.JFrame {
         tipoDenuncia = new javax.swing.JComboBox<>();
         lerrormascota = new javax.swing.JLabel();
         lerrorzona = new javax.swing.JLabel();
+        jLabel1 = new javax.swing.JLabel();
         lfondo = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
@@ -250,6 +283,11 @@ public class Denuncia extends javax.swing.JFrame {
         Fondo.add(lerrorzona);
         lerrorzona.setBounds(140, 170, 290, 20);
 
+        jLabel1.setForeground(new java.awt.Color(0, 78, 150));
+        jLabel1.setText("Tipo de Denuncia");
+        Fondo.add(jLabel1);
+        jLabel1.setBounds(50, 100, 100, 14);
+
         lfondo.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/FondoMasc.jpg"))); // NOI18N
         lfondo.setText("     ");
         Fondo.add(lfondo);
@@ -272,7 +310,11 @@ public class Denuncia extends javax.swing.JFrame {
     private void fechaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fechaActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_fechaActionPerformed
-
+/**
+ * Una vez recolectado todos los datos en la interfaz, y chequeados invocando al metodo chequeoDatos(),
+ * se ingresa dichos datos a la tabla denuncia de la base de datos.
+ * @param evt 
+ */
     private void insertarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_insertarActionPerformed
         boolean chequeo = chequeoDatos();
         System.out.println("..."+tipoDenuncia.getSelectedIndex());
@@ -292,7 +334,11 @@ public class Denuncia extends javax.swing.JFrame {
     private void zonaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_zonaActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_zonaActionPerformed
-
+/**
+ * Metodo encargado de listar en pantalla todas las denuncias hechas, recolectadas
+ * de la base de datos, de la tabla denuncia.
+ * @param evt 
+ */
     private void listarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_listarActionPerformed
         ResultSet rs = bdd.enviarConsulta("SELECT * FROM Denuncia;");
         imprimirResultados(rs, 0);
@@ -352,6 +398,7 @@ public class Denuncia extends javax.swing.JFrame {
     private javax.swing.JFormattedTextField fecha;
     private javax.swing.JTextField idmascota;
     private javax.swing.JButton insertar;
+    private javax.swing.JLabel jLabel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JLabel lerrormascota;
     private javax.swing.JLabel lerrorzona;

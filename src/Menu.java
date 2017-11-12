@@ -11,7 +11,9 @@ import java.util.logging.Logger;
  */
 
 /**
- *
+ *Clase encargada de mostrar en pantalla el menu del programa, una vez ingresada 
+ * la persona al sistema, mediante su ci.
+ * 
  * @author francisco.perdomo
  */
 public class Menu extends javax.swing.JFrame {
@@ -27,7 +29,11 @@ public class Menu extends javax.swing.JFrame {
         iden.setVisible(false);
     }
 
-    
+/**
+ * Antes de ingresar al programa, se debe chequear que esta persona este registrada.
+ * Este metodo se encarga de esta tarea, y ademas si los campos ingresados validos
+ * @return  true si los datos son validos, false de lo contrario.
+ */    
     public boolean chequearCI(){
         boolean resultado = true;
         if (ci.getText().compareTo("")!=0){
@@ -179,7 +185,10 @@ public class Menu extends javax.swing.JFrame {
             Logger.getLogger(Menu.class.getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_bbuscarActionPerformed
-
+/**
+ * Metodo encargado de dejar visible las opciones para elegir. Busqueda e insertar denuncia.
+ * @param evt 
+ */
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         boolean ciOK = chequearCI();
         if (ciOK){
